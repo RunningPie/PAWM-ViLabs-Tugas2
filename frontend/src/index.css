@@ -1,0 +1,20 @@
+/* Reset some basic styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+:root {
+    --dark-blue: #2B4865;
+    --medium-blue: #256D85;
+    --light-blue: #8FE3CF;
+    --accent: #FF9B9B;
+    --white: #fefefe;
+    --gray: #cccccc;
+    --black: #010101;
+}
+
+* {
+    font-family: 'Lexend', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

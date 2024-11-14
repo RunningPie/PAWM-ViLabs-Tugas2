@@ -1,0 +1,134 @@
+/* Footer */
+footer {
+    margin: auto 0 0;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    padding: 4vh 4vw;
+    z-index: 99;
+}
+
+.footer-logo {
+    text-align: center;
+}
+
+.footer-logo a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    gap: 10vw;
+    padding: 25px 0;
+    overflow: scroll;
+    scrollbar-width: none;
+    overflow-wrap: break-word;
+}
+
+.newsletter h2 {
+    font-size: 20px;
+}
+
+.newsletter form {
+    display: flex;
+    margin-top: 10px;
+}
+
+.newsletter input[type="email"] {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.newsletter button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    cursor: pointer;
+    /* transition: transform 0.5s ease-in-out; */
+}
+
+.newsletter button:hover {
+    background-color: var(--light-blue);
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+    overflow-wrap: break-word;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links h2 {
+    font-size: 20px;
+    margin: 0 0 15px;
+}
+
+.footer-links ul li{
+    margin-top: 10px;
+}
+
+.footer-links ul li a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.footer-legal {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.footer-legal a {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 425px) {
+
+    footer {
+        padding: 10px 20px;
+    }
+
+    .footer-content {
+        padding: 5px 5px;
+    }
+    
+    .newsletter {
+        display: none;
+    }
+
+    .footer-links {
+        width: 100%;
+    }
+
+    .footer-logo a {
+        font-size: 10px;
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .footer-links ul li a {
+        font-size: 12px;
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .footer-links h2 {
+        font-size: 15px;
+        margin: 0 0 10px;
+    }
+
+    .footer-legal {
+        font-size: 10px;
+    }
+}

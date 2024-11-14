@@ -1,0 +1,239 @@
+/* Hero Section */
+.hero {
+    background-size: cover;
+    background-position: center;
+    color: var(--white);
+    text-align: center;
+    padding: 60px 20px;
+    position: relative;
+    height: 550px;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../public/static/img/hero-banner.webp");
+    background-size: cover;
+    background-position: center;
+    opacity: 75%;
+    filter: brightness(15%);
+}
+
+.hero-content {
+    width: 45vw;
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    text-align: left;
+}
+
+.hero-content h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.cta-buttons .btn {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    display: inline-block;
+    transition: transform 0.2s ease-in-out;
+}
+
+.cta-buttons .btn:hover {
+    transform: scale(1.1);
+}
+
+/* Steps Section */
+.steps {
+    padding: 40px 0;
+}
+
+.steps .container {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.steps h2, .features-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.steps p, .features-section p {
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+.steps-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+    max-width: 100vw;
+}
+
+.steps-grid .step {
+    width: 30%;
+}
+
+.steps-grid .step img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    background-color: var(--gray);
+}
+
+.steps-grid .step h3 {
+    margin: 10px 0;
+    font-size: 20px;
+}
+
+.steps-grid .step p {
+    font-size: 16px;
+}
+
+/* CTA Section */
+.cta-section {
+    background-color: var(--medium-blue);
+    color: var(--white);
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.cta-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.cta-section p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+/* Features Section */
+.features-section {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: space-around;
+}
+
+.features-grid .feature {
+    width: 30%;
+}
+
+.features-grid .feature img {
+    margin: 10px 10px;
+    padding: 10px 10px;
+    width: 100%;
+    height: auto;
+    box-shadow: 2px 3px 6px rgba(1, 1, 1, 0.2);
+    transition: 0.2s ease-in-out;
+}
+
+.features-grid .feature img:hover {
+    transform: scale(1.05);
+}
+
+.features-grid .feature h3 {
+    margin: 10px 0;
+    font-size: 20px;
+}
+
+.features-grid .feature p {
+    font-size: 16px;
+}
+
+
+/* Media query untuk responsivitas */
+@media screen and (max-width: 425px) {
+    .hero-content {
+        width: 50%;
+        position: absolute;
+        bottom: 50px;
+        left: 50px;
+        text-align: left;
+    }
+
+    .hero-content h2, .cta-section h2 {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+    
+    .hero-content p, .cta-section p {
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    .steps-grid .step h3 {
+        margin: 10px 0;
+        font-size: 12px;
+    }
+    
+    .steps-grid .step p {
+        font-size: 10px;
+    }
+    
+    .steps h2, .features-section h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .steps p, .features-section p {
+        font-size: 14px;
+        margin-bottom: 40px;
+    }
+
+    .cta-buttons .btn {
+        background-color: var(--light-blue);
+        color: var(--dark-blue);
+        padding: 5px 10px;
+        font-size: 15px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-right: 10px;
+        display: inline-block;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .features-grid {
+        display: block;
+    }
+
+    .features-grid .feature {
+        margin: 10px auto;
+        width: 90%;
+    }
+
+    .features-grid .feature img {
+        width: 90%;
+        padding: 0px 0px;
+    }
+
+    .features-grid .feature h3 {
+        margin: 10px 0;
+        font-size: 12px;
+    }
+    
+    .features-grid .feature p {
+        font-size: 10px;
+    }
+    
+}
+

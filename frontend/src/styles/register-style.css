@@ -1,0 +1,68 @@
+/* Center the container with form */
+.register-container {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 400px;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* text-align: center; */
+}
+
+/* Header styling */
+.register-header {
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+/* Form field styling */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Individual input styles */
+.register-form input[type="text"], input[type="password"], input[type="email"], select {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Register button styling */
+.register-form button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background-color: var(--medium-blue);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.register-form button[type="submit"]:hover {
+    background-color: var(--dark-blue);
+}
+
+/* Error message styling */
+.register-form .errorlist {
+    background-color: #ffdddd;
+    color: #d9534f;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-radius: 5px;
+}
+
+/* Adjust non-field errors for better alignment */
+/* .error p {
+    margin: 0;
+} */
