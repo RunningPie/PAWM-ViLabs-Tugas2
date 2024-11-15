@@ -177,7 +177,7 @@ print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 # Set cookies to work with both backend and frontend
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
 
-CSRF_COOKIE_NAME = 'csrftoken'
+# CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
 SESSION_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
 CSRF_COOKIE_SAMESITE = 'None'

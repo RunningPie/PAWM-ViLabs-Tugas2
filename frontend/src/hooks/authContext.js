@@ -37,46 +37,16 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getCSRFToken = async () => {
-        console.log("getting CSRFToken");
-        
-        // First check if we already have the token
-        const existingCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-        if (existingCsrfCookie) {
-            return existingCsrfCookie.split('=')[1];
+        console.log("getting CSRFToken")
+        const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+        if (csrfCookie) {
+            return csrfCookie.split('=')[1];
         }
-    
-        // Test cookie support
         try {
-            // First attempt to get CSRF token
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, {
-                method: 'GET',
-                credentials: 'include',
-                mode: 'cors',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Origin': `${process.env.REACT_APP_ORIGIN}`
-                },
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Failed to fetch CSRF token: ${response.status}`);
-            }
-    
-            // Wait briefly for cookie to be set
-            await new Promise(resolve => setTimeout(resolve, 100));
-    
-            // Check if cookie was successfully set
+            await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, { credentials: 'include' });
             const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-            
-            if (!newCsrfCookie) {
-                console.error('Third-party cookies appear to be blocked by the browser');
-                // You could show a user-friendly message here
-                alert('Please enable third-party cookies in your browser settings to use this application. This is required for security purposes.');
-                return null;
-            }
-    
-            return newCsrfCookie.split('=')[1];
+            // console.log(newCsrfCookie);
+            return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
             return null;
@@ -92,12 +62,9 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login/`, {
                 method: 'POST',
                 credentials: 'include',
-                mode: 'cors',
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken,
-                    'Origin': `${process.env.REACT_APP_ORIGIN}`
                 },
                 body: JSON.stringify(formData),
             });
@@ -124,12 +91,9 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
                 method: 'POST',
                 credentials: 'include',
-                mode: 'cors',
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken,
-                    'Origin': `${process.env.REACT_APP_ORIGIN}`
                 },
             });
             
