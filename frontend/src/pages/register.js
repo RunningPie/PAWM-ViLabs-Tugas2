@@ -52,19 +52,19 @@ const Register = () => {
     }
 
     try {
-      // console.log(JSON.stringify(formData));
       const csrfToken = await getCSRFToken();
+      const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': `${process.env.REACT_APP_ORIGIN}`,
+        ...(csrfToken && { 'X-CSRFToken': csrfToken }),
+      };
       // Replace with your Django backend API URL for login
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, {
         method: 'POST',
         credentials : 'include',
         mode: 'cors',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-            'Origin': `${process.env.REACT_APP_ORIGIN}`
-        },
+        headers: headers,
         body: JSON.stringify(formData),
       });
 

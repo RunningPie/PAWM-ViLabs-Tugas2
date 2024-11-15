@@ -58,15 +58,17 @@ export const AuthProvider = ({ children }) => {
         const csrfToken = await getCSRFToken();
         const formData = { username, password, next };
         
-        console.log(csrfToken);
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Origin': `${process.env.REACT_APP_ORIGIN}`,
+            ...(csrfToken && { 'X-CSRFToken': csrfToken }),
+          };
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login/`, {
                 method: 'POST',
                 credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
+                headers: headers,
                 body: JSON.stringify(formData),
             });
 
@@ -89,14 +91,17 @@ export const AuthProvider = ({ children }) => {
         const csrfToken = await getCSRFToken();
         console.log(csrfToken);
 
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Origin': `${process.env.REACT_APP_ORIGIN}`,
+            ...(csrfToken && { 'X-CSRFToken': csrfToken }),
+          };
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
                 method: 'POST',
                 credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
+                headers: headers
             });
             
             if (response.ok) {
