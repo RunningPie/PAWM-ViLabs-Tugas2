@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         const csrfToken = await getCSRFToken();
         const formData = { username, password, next };
         
-        // console.log(csrfToken);
+        console.log(csrfToken);
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login/`, {
                 method: 'POST',
@@ -86,7 +86,8 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         const csrfToken = await getCSRFToken();
-
+        console.log(csrfToken);
+        
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
                 method: 'POST',
