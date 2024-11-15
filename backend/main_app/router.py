@@ -1,14 +1,14 @@
 from django.urls import path
 from . import views
-from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('', views.check, name = "health-check"),
-    path('api/login/', views.login_view, name='login'),
-    path('api/logout/', views.logout_view, name='logout'),
-    path('api/check-auth/', views.check_auth, name='check-auth'),
-    path('api/get-csrf-token/', views.get_csrf_token, name='get-csrf-token'),
-    path('api/register/', views.register_view, name='register'),
-    path('api/save_progress/', views.save_progress, name='save_progress'),
-    path('api/get_progress/', views.get_progress, name='get_progress')
+    path('', views.check),
+    path('api/register/', views.register_view),
+    path('api/login/', views.login_view),
+    path('api/logout/', views.logout_view),
+    path('api/check-auth/', views.check_auth),
+    path('api/get-progress/', views.get_progress),
+    path('api/save-progress/', views.save_progress),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

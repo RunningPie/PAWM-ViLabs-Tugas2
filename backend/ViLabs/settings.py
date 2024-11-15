@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -40,9 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'main_app'
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -171,6 +174,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Use database-backed sessions for persistent login across pages
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 
@@ -178,15 +193,24 @@ print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
 
 CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
+SESSION_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 if DJANGO_ENV == 'development':
     # For development
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_DOMAIN = '127.0.0.1'
+    SESSION_COOKIE_DOMAIN = '127.0.0.1'
 
-print(f"SESSION_COOKIE_DOMAIN is set to: {SESSION_COOKIE_SECURE}")
+print(f"CSRF_COOKIE_SAMESITE is set to: {CSRF_COOKIE_SAMESITE}")
+print(f"SESSION_COOKIE_DOMAIN is set to: {SESSION_COOKIE_DOMAIN}")
 
 # Ensure that sessions do not expire on browser close
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

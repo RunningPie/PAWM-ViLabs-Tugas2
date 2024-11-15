@@ -14,67 +14,56 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         setLoading(true);
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            setIsLoggedIn(false);
+            setUserProfile(null);
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/check-auth/`, {
-                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
             const data = await response.json();
-            
+
             if (response.ok && data.isAuthenticated) {
                 setIsLoggedIn(true);
                 setUserProfile(data.userProfile);
             } else {
                 setIsLoggedIn(false);
                 setUserProfile(null);
+                localStorage.removeItem('jwtToken');
             }
         } catch (error) {
             console.error('Error checking auth status:', error);
             setIsLoggedIn(false);
             setUserProfile(null);
+            localStorage.removeItem('jwtToken');
         } finally {
             setLoading(false);
         }
     };
 
-    const getCSRFToken = async () => {
-        console.log("getting CSRFToken")
-        const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-        if (csrfCookie) {
-            console.log("old CSRFToken:", csrfCookie);
-            return csrfCookie.split('=')[1];
-        }
-        try {
-            await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, { credentials: 'include' });
-            const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-            console.log("new CSRFToken:", newCsrfCookie);
-            return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
-        } catch (error) {
-            console.error('Error fetching CSRF token:', error);
-            return null;
-        }
-    };
-
     const login = async (username, password, next = '/') => {
-        const csrfToken = await getCSRFToken();
-        const formData = { username, password, next };
-        
-        const headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Origin': `${process.env.REACT_APP_ORIGIN}`,
-            ...(csrfToken && { 'X-CSRFToken': csrfToken }),
-          };
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login/`, {
                 method: 'POST',
-                credentials: 'include',
-                headers: headers,
-                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
             });
 
             const result = await response.json();
-            
+
             if (response.ok) {
+                const token = result.tokens.access; // JWT token from backend
+                localStorage.setItem('jwtToken', token);
                 setIsLoggedIn(true);
                 setUserProfile(result.user_profile);
                 return { success: true, next: next || '/' };
@@ -88,29 +77,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        const csrfToken = await getCSRFToken();
-        console.log(csrfToken);
-
-        const headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Origin': `${process.env.REACT_APP_ORIGIN}`,
-            ...(csrfToken && { 'X-CSRFToken': csrfToken }),
-          };
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: headers
-            });
-            
-            if (response.ok) {
-                setIsLoggedIn(false);
-                setUserProfile(null);
-            }
-        } catch (error) {
-            console.error('Error during logout:', error);
-        }
+        localStorage.removeItem('jwtToken');
+        setIsLoggedIn(false);
+        setUserProfile(null);
     };
 
     return (

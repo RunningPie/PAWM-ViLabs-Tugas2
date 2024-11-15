@@ -1,39 +1,39 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
-# from .forms import RegisterForm
-import logging
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from .models import UserProgress
 import json
+import logging
 
 logger = logging.getLogger(__name__)
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 def check(request):
     return JsonResponse({"message": "Backend is OK"})
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def check_auth(request):
-    if request.user.is_authenticated:
-        # Return user profile data if authenticated
-        user = request.user
-        user_profile = {
-                "username": user.username,
-                "email": user.email,
-                "date_joined": str(user.date_joined).split(" ")[0]
-            }
-        return JsonResponse({"isAuthenticated": True, "userProfile": user_profile})
-    else:
-        # Return JSON for unauthenticated users
-        return JsonResponse({"isAuthenticated": False, "userProfile": None})
+    # Use JWT token to verify authentication
+    user = request.user
+    user_profile = {
+        "username": user.username,
+        "email": user.email,
+        "date_joined": str(user.date_joined).split(" ")[0]
+    }
+    return JsonResponse({"isAuthenticated": True, "userProfile": user_profile})
 
-
-@csrf_exempt
-def get_csrf_token(request):
-    return JsonResponse({"message":"CSRF cookie set"})
-
+@api_view(['POST'])
 def register_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -41,63 +41,67 @@ def register_view(request):
             user = User.objects.create(username=data["username"], email=data["email"])
             user.set_password(data["password"])
             user.save()
-            login(request, user)
+
+            tokens = get_tokens_for_user(user)
             return JsonResponse({
                 'success': True,
-                'message': 'Register successfully',
+                'message': 'Registration successful',
+                'tokens': tokens,  # Contains 'access' and 'refresh'
+                'user_profile': {  # Include user profile data if needed
+                    'username': user.username,
+                    'email': user.email,
+                    'date_joined': str(user.date_joined).split(" ")[0]
+                }
             }, status=200)
         else:
             return JsonResponse({
                 'success': False,
-                'message': "Password doesn't equal confirmed password",
+                'message': "Password doesn't match confirmed password",
             }, status=400)
     return JsonResponse({
-                'success': False,
-                'message': 'Only POST requests are allowed',
-            }, status=405)
+        'success': False,
+        'message': 'Only POST requests are allowed',
+    }, status=405)
 
-@csrf_exempt
+@api_view(['POST'])
 def login_view(request):
-    logger.info(f"Request Headers: {request.headers}")
-    logger.info(f"Cookies: {request.COOKIES}")
-    
     if request.method == 'POST':
         data = json.loads(request.body)
-        
         username = data['username']
         password = data['password']
-                
+        
         # Authenticate user
         user = authenticate(username=username, password=password)
-        
         if user is not None:
-            login(request, user)
-            
-            # JSON response for successful login
+            tokens = get_tokens_for_user(user)
             return JsonResponse({
                 'success': True,
                 'message': 'Login successful',
-                'next': request.POST.get('next', '/')  # Send next URL or default to root
+                'tokens': tokens,  # Contains 'access' and 'refresh'
+                'user_profile': {  # Include user profile data if needed
+                    'username': user.username,
+                    'email': user.email,
+                    'date_joined': str(user.date_joined).split(" ")[0]
+                }
             }, status=200)
         else:
-            # JSON response for failed login
             return JsonResponse({
                 'success': False,
                 'error': 'Invalid username or password'
             }, status=400)
-    
-    # Method not allowed
     return JsonResponse({
         'success': False,
         'error': 'Only POST requests are allowed'
     }, status=405)
 
-@require_POST
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def logout_view(request):
-    logout(request)
+    # With JWT, logout can simply be handled client-side by removing the token
     return JsonResponse({"success": True, "message": "Logout successful"})
-    
-@require_POST
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def save_progress(request):
     data = json.loads(request.body)
     exercise_id = data['exerciseId']
@@ -111,14 +115,13 @@ def save_progress(request):
         defaults={'progress': items, 'completed': completed, 'reset': reset}
     )
     return JsonResponse({'status': 'success'})
-@login_required
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_progress(request):
     exercise_id = "decomposition"
     try:
-        # Get the user's progress for the specific exercise
         user_progress = UserProgress.objects.get(user=request.user, exercise_id=exercise_id)
-        # Prepare the data to return as JSON
-        print(user_progress.progress)
         progress_data = {
             "items": [
                 {"id": item["id"], "category": item.get("category", "main-recipe")}
@@ -129,5 +132,4 @@ def get_progress(request):
         }
         return JsonResponse(progress_data)
     except UserProgress.DoesNotExist:
-        # Return empty progress if no record exists for the user
         return JsonResponse({"items": [], "completed": False})

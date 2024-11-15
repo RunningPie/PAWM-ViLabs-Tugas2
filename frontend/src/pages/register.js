@@ -24,67 +24,35 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    async function getCSRFToken() {
-      // First, try to get from cookie
-      const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-      if (csrfCookie) {
-        return csrfCookie.split('=')[1];
-      }
-      
-      // If no cookie, fetch it from the server
-      try {
-        await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, {
-          method: 'GET',
-          credentials: 'include',
-          mode: 'cors',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Origin': `${process.env.REACT_APP_ORIGIN}`
-          },
-        });
-        const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-        return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
-      } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-        return null;
-      }
-    }
-
     try {
-      const csrfToken = await getCSRFToken();
-      const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Origin': `${process.env.REACT_APP_ORIGIN}`,
-        ...(csrfToken && { 'X-CSRFToken': csrfToken }),
-      };
-      // Replace with your Django backend API URL for login
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, {
-        method: 'POST',
-        credentials : 'include',
-        mode: 'cors',
-        headers: headers,
-        body: JSON.stringify(formData),
-      });
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData),
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (response.ok) {
-        // If login is successful, navigate or redirect as needed
-        navigate('/login'); // Redirect to "next" or the homepage
-      } else {
-        // Display error message if login fails
-        setError(result.error || 'Login failed. Please try again.');
-      }
+        if (response.ok) {
+            // Store the JWT token in localStorage
+            const token = result.token; // Assuming the token is returned in result.token
+            localStorage.setItem('jwtToken', token);
+
+            // Redirect or navigate to login or next page as needed
+            navigate('/login'); 
+        } else {
+            // Display error message if registration fails
+            setError(result.error || 'Registration failed. Please try again.');
+        }
     } catch (error) {
-      setError('An error occurred. Please try again later.');
+        console.error('Error during registration:', error);
+        setError('An error occurred. Please try again later.');
     }
+};
 
-
-    // Handle form submission logic here
-    // console.log(formData); // Example: log the form data to the console
-  };
 
   return (
     <div className="register-container">

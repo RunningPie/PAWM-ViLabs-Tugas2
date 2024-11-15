@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useDragAndDrop, loadProgress, saveProgress, checkCategories } from '../hooks/decomUtil.js';
-import '../styles/decom-style.css'; // Import the custom CSS file
-
+import { useDragAndDrop, checkCategories } from '../hooks/decomUtil.js';
+import '../styles/decom-style.css';
 
 const Decomposition = () => {
+  const token = localStorage.getItem('jwtToken'); // Get the JWT token from the auth context
   const [items, setItems] = useState([
     { id: 'i1', text: 'Measure 2 cups of flour', dataCategory: 'ingredients' },
     { id: 'i2', text: 'Get 3 fresh eggs', dataCategory: 'ingredients' },
@@ -13,12 +13,12 @@ const Decomposition = () => {
     { id: 'u3', text: 'Find baking pan', dataCategory: 'utensils' },
     { id: 's1', text: 'Mix dry ingredients', dataCategory: 'steps' },
     { id: 's2', text: 'Preheat oven to 350°F', dataCategory: 'steps' },
-    { id: 's3', text: 'Beat eggs until fluffy', dataCategory: 'steps' }
+    { id: 's3', text: 'Beat eggs until fluffy', dataCategory: 'steps' },
   ]);
 
   const updateItemCategory = (itemId, newCategory) => {
-    setItems(prevItems => 
-      prevItems.map(item => 
+    setItems((prevItems) =>
+      prevItems.map((item) =>
         item.id === itemId ? { ...item, category: newCategory } : item
       )
     );
@@ -35,29 +35,69 @@ const Decomposition = () => {
     feedbackColor,
     setFeedbackColor,
     isNextChapterEnabled,
-    setIsNextChapterEnabled
+    setIsNextChapterEnabled,
   } = useDragAndDrop(updateItemCategory);
+
+  const loadProgress = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-progress/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.error('Failed to load progress');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error loading progress:', error);
+      return null;
+    }
+  };
+
+  const saveProgress = async (progressData) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/save-progress/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(progressData),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save progress');
+      }
+    } catch (error) {
+      console.error('Error saving progress:', error);
+    }
+  };
 
   useEffect(() => {
     const initializeProgress = async () => {
       const progress = await loadProgress();
       if (progress) {
-        setItems(prevItems => {
-          // Check if progress.items is empty
+        setItems((prevItems) => {
           if (!progress.items || progress.items.length === 0) {
-            // If empty, set category to "main-recipe" for all items
-            return prevItems.map(item => ({ ...item, category: "main-recipe" }));
+            return prevItems.map((item) => ({
+              ...item,
+              category: 'main-recipe',
+            }));
           } else {
-            // If not empty, use the original logic
-            return prevItems.map(item => {
-              const savedItem = progress.items.find(i => i.id === item.id);
+            return prevItems.map((item) => {
+              const savedItem = progress.items.find((i) => i.id === item.id);
               return savedItem ? { ...item, category: savedItem.category } : item;
             });
           }
         });
-        
+
         if (!progress.reset && progress.completed) {
-          setFeedback("Perfect! All tasks are in their correct categories! 🎉");
+          setFeedback('Perfect! All tasks are in their correct categories! 🎉');
           setFeedbackColor('green');
           setIsNextChapterEnabled(true);
         }
@@ -69,10 +109,11 @@ const Decomposition = () => {
 
   const handleCheckCategories = async () => {
     const isCorrect = checkCategories(items);
-    
-    setFeedback(isCorrect 
-      ? "Perfect! All tasks are in their correct categories! 🎉"
-      : "Some tasks are in the wrong categories. Try again! 😊"
+
+    setFeedback(
+      isCorrect
+        ? 'Perfect! All tasks are in their correct categories! 🎉'
+        : 'Some tasks are in the wrong categories. Try again! 😊'
     );
     setFeedbackColor(isCorrect ? 'green' : 'red');
     setIsNextChapterEnabled(isCorrect);
@@ -81,15 +122,16 @@ const Decomposition = () => {
       exerciseId: 'decomposition',
       items: items.map(({ id, category }) => ({ id, category })),
       completed: isCorrect,
-      reset: false
+      reset: false,
     });
   };
 
   const handleReset = async () => {
-    setItems(prevItems => 
-      prevItems.map(item => ({ ...item, category: 'main-recipe' }))
+    console.log("reset called");
+    setItems((prevItems) =>
+      prevItems.map((item) => ({ ...item, category: 'main-recipe' }))
     );
-    setFeedback("Exercise has been reset.");
+    setFeedback('Exercise has been reset.');
     setFeedbackColor('black');
     setIsNextChapterEnabled(false);
 
@@ -99,7 +141,7 @@ const Decomposition = () => {
       exerciseId: 'decomposition',
       items: items.map(({ id }) => ({ id, category: 'main-recipe' })),
       completed: false,
-      reset: true
+      reset: true,
     });
   };
   return (
