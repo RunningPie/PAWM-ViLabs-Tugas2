@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuthStatus = async () => {
         setLoading(true);
         try {
-            const response = await fetch('/api/check-auth/', {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/check-auth/`, {
                 credentials: 'include',
             });
             const data = await response.json();
@@ -37,13 +37,15 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getCSRFToken = async () => {
+        console.log("getting CSRFToken")
         const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
         if (csrfCookie) {
             return csrfCookie.split('=')[1];
         }
         try {
-            await fetch('/api/get-csrf-token/', { credentials: 'include' });
+            await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, { credentials: 'include' });
             const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+            // console.log(newCsrfCookie);
             return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
@@ -55,8 +57,9 @@ export const AuthProvider = ({ children }) => {
         const csrfToken = await getCSRFToken();
         const formData = { username, password, next };
         
+        // console.log(csrfToken);
         try {
-            const response = await fetch('/api/login/', {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login/`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -85,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         const csrfToken = await getCSRFToken();
 
         try {
-            const response = await fetch('/api/logout/', {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

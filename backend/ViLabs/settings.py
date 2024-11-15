@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -54,14 +58,15 @@ MIDDLEWARE = [
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app']
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    "https://pawm-vilabs-backend.vercel.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    "https://pawm-vilabs-backend.vercel.app"
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
@@ -91,10 +96,17 @@ WSGI_APPLICATION = 'ViLabs.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3', #for development purposes only
+        'ENGINE': os.environ["DB_ENGINE"],
+        'NAME': os.environ["DB_NAME"],
+        'USER': os.environ["DB_USER"],
+        'PASSWORD': os.environ["DB_PASSWORD"],
+        'HOST': os.environ["DB_HOST"],
+        'PORT': os.environ["DB_PORT"],
+        # 'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -153,10 +165,27 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Use database-backed sessions for persistent login across pages
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+
+if os.environ.get('DJANGO_ENV') == 'production':
+    CSRF_COOKIE_DOMAIN = '.vercel.app'
+else:
+    CSRF_COOKIE_DOMAIN = '127.0.0.1'  # or 'localhost' if that’s your usual test domain
+
 # Set cookies to work with both backend and frontend
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
+
+# Default for local development
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
+# Override for production
+if os.environ['DJANGO_ENV'] == 'production':
+    CSRF_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
 
 # Ensure that sessions do not expire on browser close
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

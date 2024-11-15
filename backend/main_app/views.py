@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 # from .forms import RegisterForm
 from .models import UserProgress
 import json
 
+def check(request):
+    return JsonResponse({"message": "Backend is OK"})
 
 def check_auth(request):
     if request.user.is_authenticated:

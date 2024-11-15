@@ -33,7 +33,7 @@ const Register = () => {
       
       // If no cookie, fetch it from the server
       try {
-        await fetch('/api/get-csrf-token/', {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, {
           credentials: 'include',
         });
         const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
@@ -48,7 +48,7 @@ const Register = () => {
       // console.log(JSON.stringify(formData));
       const csrfToken = await getCSRFToken();
       // Replace with your Django backend API URL for login
-      const response = await fetch('/api/register/', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, {
         method: 'POST',
         credentials : 'include',
         headers: {
