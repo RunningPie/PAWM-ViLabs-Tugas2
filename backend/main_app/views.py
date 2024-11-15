@@ -6,8 +6,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 # from .forms import RegisterForm
+import logging
 from .models import UserProgress
 import json
+
+logger = logging.getLogger(__name__)
 
 def check(request):
     return JsonResponse({"message": "Backend is OK"})
@@ -27,7 +30,7 @@ def check_auth(request):
         return JsonResponse({"isAuthenticated": False, "userProfile": None})
 
 
-@ensure_csrf_cookie
+@csrf_exempt
 def get_csrf_token(request):
     return JsonResponse({"message":"CSRF cookie set"})
 
@@ -53,8 +56,11 @@ def register_view(request):
                 'message': 'Only POST requests are allowed',
             }, status=405)
 
-@ensure_csrf_cookie
+@csrf_exempt
 def login_view(request):
+    logger.info(f"Request Headers: {request.headers}")
+    logger.info(f"Cookies: {request.COOKIES}")
+    
     if request.method == 'POST':
         data = json.loads(request.body)
         

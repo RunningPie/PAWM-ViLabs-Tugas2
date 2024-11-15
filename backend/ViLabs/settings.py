@@ -177,25 +177,16 @@ print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 # Set cookies to work with both backend and frontend
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
 
-# CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
-SESSION_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 if DJANGO_ENV == 'development':
     # For development
-    CSRF_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_DOMAIN = '127.0.0.1'
-    SESSION_COOKIE_DOMAIN = '127.0.0.1'
 
-print(f"CSRF_COOKIE_SAMESITE is set to: {CSRF_COOKIE_SAMESITE}")
-print(f"SESSION_COOKIE_DOMAIN is set to: {SESSION_COOKIE_DOMAIN}")
+print(f"SESSION_COOKIE_DOMAIN is set to: {SESSION_COOKIE_SECURE}")
 
 # Ensure that sessions do not expire on browser close
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
