@@ -40,12 +40,13 @@ export const AuthProvider = ({ children }) => {
         console.log("getting CSRFToken")
         const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
         if (csrfCookie) {
+            console.log("old CSRFToken:", csrfCookie);
             return csrfCookie.split('=')[1];
         }
         try {
             await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, { credentials: 'include' });
             const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-            // console.log(newCsrfCookie);
+            console.log("new CSRFToken:", newCsrfCookie);
             return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
@@ -87,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         const csrfToken = await getCSRFToken();
         console.log(csrfToken);
-        
+
         try {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/logout/`, {
                 method: 'POST',
