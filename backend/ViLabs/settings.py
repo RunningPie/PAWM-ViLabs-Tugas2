@@ -59,12 +59,14 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app']
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
-    "https://pawm-vilabs-backend.vercel.app"
+    "https://pawm-vilabs-backend.vercel.app",
+    "https://vilabs2.vercel.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
-    "https://pawm-vilabs-backend.vercel.app"
+    "https://pawm-vilabs-backend.vercel.app",
+    "https://vilabs2.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -165,27 +167,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Use database-backed sessions for persistent login across pages
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-
-if os.environ.get('DJANGO_ENV') == 'production':
-    CSRF_COOKIE_DOMAIN = '.vercel.app'
-else:
-    CSRF_COOKIE_DOMAIN = '127.0.0.1'  # or 'localhost' if that’s your usual test domain
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
+print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 
 # Set cookies to work with both backend and frontend
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
 
-# Default for local development
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
 
-# Override for production
-if os.environ['DJANGO_ENV'] == 'production':
-    CSRF_COOKIE_SAMESITE = 'None'
-    SESSION_COOKIE_SAMESITE = 'None'
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_DOMAIN = '.vercel.app'  # Allow cookies across subdomains
+SESSION_COOKIE_DOMAIN = '.vercel.app'  # Allow cookies across subdomains
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+if DJANGO_ENV == 'development':
+    # For development
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_DOMAIN = '127.0.0.1'
+    SESSION_COOKIE_DOMAIN = '127.0.0.1'
+
+print(f"CSRF_COOKIE_SAMESITE is set to: {CSRF_COOKIE_SAMESITE}")
+print(f"SESSION_COOKIE_DOMAIN is set to: {SESSION_COOKIE_DOMAIN}")
 
 # Ensure that sessions do not expire on browser close
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

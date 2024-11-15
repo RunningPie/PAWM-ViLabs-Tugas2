@@ -91,24 +91,6 @@ def logout_view(request):
     logout(request)
     return JsonResponse({"success": True, "message": "Logout successful"})
     
-@login_required
-def profile_view(request):
-    return render(request, 'profile.html', {'logged_in': request.user.is_authenticated})
-
-def index_view(request):
-    return render(request, 'index.html', {'logged_in': request.user.is_authenticated})
-
-def aboutus_view(request):
-    return render(request, 'aboutus.html', {'logged_in': request.user.is_authenticated})
-
-@login_required
-def courses_view(request):
-    return render(request, 'courses.html', {'logged_in': True})
-
-@login_required
-def decom_view(request):
-    return render(request, 'decom.html', {'logged_in': True, 'user_id': request.user.id})
-
 @require_POST
 def save_progress(request):
     data = json.loads(request.body)
@@ -143,6 +125,3 @@ def get_progress(request):
     except UserProgress.DoesNotExist:
         # Return empty progress if no record exists for the user
         return JsonResponse({"items": [], "completed": False})
-
-def comingsoon_view(request):
-    return render(request, 'comingsoon.html', {'logged_in': request.user.is_authenticated})

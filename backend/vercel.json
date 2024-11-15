@@ -5,6 +5,15 @@
     ],
     "routes": [
       { "src": "/(.*)", "dest": "ViLabs/wsgi.py" }
-    ]
+    ],
+    "env": {
+      "DJANGO_ENV": "production",
+      "DB_PASSWORD": "1005 @oo$ SUPABASE",
+      "DB_USER": "postgres.egsfmoijqrkbtizzkgrc",
+      "DB_PORT": "6543",
+      "DB_NAME": "postgres",
+      "DB_HOST": "aws-0-ap-southeast-1.pooler.supabase.com",
+      "DB_ENGINE": "django.db.backends.postgresql_psycopg2"
+    }
   }
   

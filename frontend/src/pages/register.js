@@ -34,7 +34,14 @@ const Register = () => {
       // If no cookie, fetch it from the server
       try {
         await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-csrf-token/`, {
+          method: 'GET',
           credentials: 'include',
+          mode: 'cors',
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Origin': `${process.env.REACT_APP_ORIGIN}`
+          },
         });
         const newCsrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
         return newCsrfCookie ? newCsrfCookie.split('=')[1] : null;
@@ -51,9 +58,12 @@ const Register = () => {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, {
         method: 'POST',
         credentials : 'include',
+        mode: 'cors',
         headers: {
-          'Content-Type' : 'application/json',
-          'X-CSRFToken': csrfToken,  // Add CSRF token here
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            'Origin': `${process.env.REACT_APP_ORIGIN}`
         },
         body: JSON.stringify(formData),
       });
