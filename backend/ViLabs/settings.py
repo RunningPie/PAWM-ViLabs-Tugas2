@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o4dq6w2d##pucqu@*m^gqs1#o=mfuggww7r5^4sfk5cq0@f%8w'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -55,7 +55,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'vilabs2.vercel.app',
+    'pawm-vilabs-backend.vercel.app']
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
@@ -173,9 +177,9 @@ print(f"DJANGO_ENV is set to: {DJANGO_ENV}")
 # Set cookies to work with both backend and frontend
 CSRF_COOKIE_HTTPONLY = False  # False if CSRF token needs to be accessible to JavaScript
 
-
-CSRF_COOKIE_DOMAIN = '.vercel.app'  # Allow cookies across subdomains
-SESSION_COOKIE_DOMAIN = '.vercel.app'  # Allow cookies across subdomains
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
+SESSION_COOKIE_DOMAIN = 'pawm-vilabs-backend.vercel.app'  # Allow cookies across subdomains
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
