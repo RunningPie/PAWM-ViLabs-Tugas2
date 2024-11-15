@@ -2,6 +2,6 @@ Django==5.1.2
 django-cors-headers==4.6.0
 django-crispy-forms==2.3
 djangorestframework==3.15.2
-gunicorn
-psycopg2-binary
+djangorestframework-simplejwt==5.3.1
 python-dotenv==1.0.1
+psycopg2-binary
